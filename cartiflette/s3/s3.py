@@ -13,13 +13,12 @@ from topojson import Topology
 from cartiflette.utils import (
     keep_subset_geopandas,
     dict_corresp_filter_by,
-    create_format_standardized,
-    create_format_driver,
     create_path_bucket,
     official_epsg_codes,
+    standardize_inputs,
 )
 
-from cartiflette.s3.preprocess import (
+from cartiflette.public.client import (
     # store_vectorfile_ign,
     get_vectorfile_ign,
     get_vectorfile_communes_arrondissement,
@@ -30,16 +29,6 @@ from cartiflette import BUCKET, PATH_WITHIN_BUCKET, ENDPOINT_URL, FS
 
 
 # UTILITIES --------------------------------
-
-
-def standardize_inputs(vectorfile_format):
-    corresp_filter_by_columns = dict_corresp_filter_by()
-    format_standardized = create_format_standardized()
-    gpd_driver = create_format_driver()
-    format_write = format_standardized[vectorfile_format.lower()]
-    driver = gpd_driver[format_write]
-
-    return corresp_filter_by_columns, format_write, driver
 
 
 def create_dict_all_territories(
@@ -81,7 +70,7 @@ def create_url_s3(
     path_within_bucket: str = PATH_WITHIN_BUCKET,
     provider: str = "IGN",
     source: str = "EXPRESS-COG-TERRITOIRE",
-    vectorfile_format: str = "geojson",
+    file_format: str = "geojson",
     borders: str = "COMMUNE",
     filter_by: str = "region",
     year: typing.Union[str, int, float] = "2022",
@@ -95,7 +84,7 @@ def create_url_s3(
     Parameters:
     bucket (str): The name of the bucket where the file is stored. Default is BUCKET.
     path_within_bucket (str): The path within the bucket where the file is stored. Default is PATH_WITHIN_BUCKET.
-    vectorfile_format (str): The format of the vector file, can be "geojson", "topojson", "gpkg" or "shp". Default is "geojson".
+    file_format (str): The format of the vector file, can be "geojson", "topojson", "gpkg" or "shp". Default is "geojson".
     borders (str): The administrative borders of the tiles within the vector file. Can be any administrative borders provided by IGN, e.g. "COMMUNE", "DEPARTEMENT" or "REGION". Default is "COMMUNE".
     filter_by (str): The administrative borders (supra to 'borders') that will be used to cut the vector file in pieces when writing to S3. For instance, if borders is "DEPARTEMENT", filter_by can be "REGION" or "FRANCE_ENTIERE". Default is "region".
     year (typing.Union[str, int, float]): The year of the vector file. Default is "2022".
@@ -112,7 +101,7 @@ def create_url_s3(
             "path_within_bucket": path_within_bucket,
             "provider": provider,
             "source": source,
-            "vectorfile_format": vectorfile_format,
+            "file_format": file_format,
             "borders": borders,
             "filter_by": filter_by,
             "year": year,
@@ -137,7 +126,7 @@ def create_url_s3(
 
 def write_cog_s3(
     year: int = 2022,
-    vectorfile_format="json",
+    file_format="json",
     fs: s3fs.S3FileSystem = FS,
 ):
     list_cog = get_cog_year(year)
@@ -149,7 +138,7 @@ def write_cog_s3(
                 "path_within_bucket": PATH_WITHIN_BUCKET,
                 "provider": "INSEE",
                 "source": "COG",
-                "vectorfile_format": vectorfile_format,
+                "file_format": file_format,
                 "borders": level,
                 "filter_by": "france_entiere",
                 "year": year,
@@ -163,11 +152,11 @@ def write_cog_s3(
 
     for path, data in dict_path_data.items():
         with fs.open(path, "wb") as f:
-            if vectorfile_format == "json":
+            if file_format == "json":
                 data.to_json(f, orient="records")
-            elif vectorfile_format == "parquet":
+            elif file_format == "parquet":
                 data.to_parquet(f)
-            elif vectorfile_format == "csv":
+            elif file_format == "csv":
                 data.to_csv(f)
             else:
                 print("Unsupported format")
@@ -176,7 +165,7 @@ def write_cog_s3(
 def write_vectorfile_subset(
     object: gpd.GeoDataFrame,
     value: str = "28",
-    vectorfile_format: str = "geojson",
+    file_format: str = "geojson",
     borders: str = "COMMUNE",
     filter_by: str = "region",
     year: int = 2022,
@@ -197,7 +186,7 @@ def write_vectorfile_subset(
         The input vector file as a GeoPandas DataFrame.
     value : str, optional
         The value of the subset of the vector file to be written, by default "28".
-    vectorfile_format : str, optional
+    file_format : str, optional
         The format of the vector file to be written, by default "geojson".
     borders : str, optional
         The borders of the vector file to be written, by default "COMMUNE".
@@ -218,7 +207,7 @@ def write_vectorfile_subset(
     """
 
     corresp_filter_by_columns, format_write, driver = standardize_inputs(
-        vectorfile_format
+        file_format
     )
 
     write_path = create_path_bucket(
@@ -227,7 +216,7 @@ def write_vectorfile_subset(
             "path_within_bucket": path_within_bucket,
             "provider": provider,
             "source": source,
-            "vectorfile_format": format_write,
+            "file_format": format_write,
             "borders": borders,
             "filter_by": filter_by,
             "year": year,
@@ -283,7 +272,7 @@ def write_vectorfile_all_borders(
     object: gpd.GeoDataFrame,
     borders_var: str,
     borders: str = "COMMUNE",
-    vectorfile_format: str = "geojson",
+    file_format: str = "geojson",
     filter_by: str = "region",
     year: typing.Union[str, int, float] = 2022,
     crs: typing.Union[str, int, float] = 2154,
@@ -303,7 +292,7 @@ def write_vectorfile_all_borders(
         object (gpd.GeoDataFrame): The GeoDataFrame object to write.
         borders_var (str): The variable name on which to create the borders.
         borders (str, optional): The borders of the vector file. Defaults to "COMMUNE".
-        vectorfile_format (str, optional): The format of the vector file. Defaults to "geojson".
+        file_format (str, optional): The format of the vector file. Defaults to "geojson".
         filter_by (str, optional): The filter_by of the vector file. Defaults to "region".
         year (typing.Union[str, int, float], optional): The year of the vector file. Defaults to 2022.
         bucket (str, optional): The S3 bucket where to write the vector file. Defaults to BUCKET.
@@ -314,7 +303,7 @@ def write_vectorfile_all_borders(
     [
         write_vectorfile_subset(
             object,
-            vectorfile_format=vectorfile_format,
+            file_format=file_format,
             filter_by=filter_by,
             year=year,
             value=obs,
@@ -345,7 +334,7 @@ def write_vectorfile_s3_shp(object, fs, write_path, driver=None):
 
 
 def write_vectorfile_s3_custom_arrondissement(
-    vectorfile_format="geojson",
+    file_format="geojson",
     year: int = 2022,
     filter_by="region",
     bucket: str = BUCKET,
@@ -357,7 +346,7 @@ def write_vectorfile_s3_custom_arrondissement(
     fs: s3fs.S3FileSystem = FS,
 ):
     if crs is None:
-        if vectorfile_format.lower() == "geojson":
+        if file_format.lower() == "geojson":
             crs = 4326
         else:
             crs = "official"
@@ -380,7 +369,7 @@ def write_vectorfile_s3_custom_arrondissement(
         object=object,
         borders="COMMUNE_ARRONDISSEMENT",
         borders_var=var_filter_by_s3,
-        vectorfile_format=vectorfile_format,
+        file_format=file_format,
         filter_by=filter_by,
         year=year,
         crs=crs,
@@ -395,7 +384,7 @@ def write_vectorfile_s3_custom_arrondissement(
 
 def write_vectorfile_s3_all(
     borders="COMMUNE",
-    vectorfile_format="geojson",
+    file_format="geojson",
     filter_by="region",
     year=2022,
     crs: int = None,
@@ -406,7 +395,7 @@ def write_vectorfile_s3_all(
     fs: s3fs.S3FileSystem = FS,
 ):
     if crs is None:
-        if vectorfile_format.lower() == "geojson":
+        if file_format.lower() == "geojson":
             crs = 4326
         else:
             crs = "official"
@@ -441,7 +430,7 @@ def write_vectorfile_s3_all(
             object=territories[territory],
             borders=borders,
             borders_var=var_filter_by_s3,
-            vectorfile_format=vectorfile_format,
+            file_format=file_format,
             filter_by=filter_by,
             year=year,
             crs=epsg,
@@ -452,7 +441,7 @@ def write_vectorfile_s3_all(
 
 
 def open_vectorfile_from_s3(
-    vectorfile_format,
+    file_format,
     filter_by,
     year,
     value,
@@ -461,7 +450,7 @@ def open_vectorfile_from_s3(
 ):
     read_path = create_path_bucket(
         {
-            "vectorfile_format": vectorfile_format,
+            "file_format": file_format,
             "filter_by": filter_by,
             "year": year,
             "value": value,
@@ -476,7 +465,7 @@ def write_vectorfile_from_s3(
     filter_by: str,
     year: int,
     value: str,
-    vectorfile_format: str = "geojson",
+    file_format: str = "geojson",
     crs: int = 2154,
     provider="IGN",
     source="EXPRESS-COG-TERRITOIRE",
@@ -489,12 +478,12 @@ def write_vectorfile_from_s3(
         filter_by (str): _description_
         year (int): Year that should be used
         value (str): Which value should be retrieved
-        vectorfile_format (str, optional): vectorfile format needed. Defaults to "geojson".
+        file_format (str, optional): vectorfile format needed. Defaults to "geojson".
     """
 
     read_path = create_path_bucket(
         {
-            "vectorfile_format": vectorfile_format,
+            "file_format": file_format,
             "filter_by": filter_by,
             "year": year,
             "value": value,
@@ -512,14 +501,14 @@ def write_vectorfile_from_s3(
 def create_territories(
     borders: str = "COMMUNE",
     filter_by: str = "region",
-    vectorfile_format: str = "geojson",
+    file_format: str = "geojson",
     year: int = 2022,
     provider: str = "IGN",
     source: str = "EXPRESS-COG-TERRITOIRE",
     crs: int = None,
 ):
     if crs is None:
-        if vectorfile_format.lower() == "geojson":
+        if file_format.lower() == "geojson":
             crs = 4326
         else:
             crs = "official"
@@ -586,7 +575,7 @@ def list_produced_cartiflette(
     df[["year", "administrative_level", "crs", "filter_by", "format"]] = df[
         "paths"
     ].str.extract(
-        r"year=(\d+)/administrative_level=(\w+)/crs=(\d+)/(.*)=.*/vectorfile_format=\'(\w+)\'"
+        r"year=(\d+)/administrative_level=(\w+)/crs=(\d+)/(.*)=.*/file_format=\'(\w+)\'"
     )
 
     df = df.filter(
@@ -637,7 +626,7 @@ def production_cartiflette(
 
         production_func(
             borders=borders,
-            vectorfile_format=format,
+            file_format=format,
             filter_by=filter_by,
             year=year,
             crs=crs,

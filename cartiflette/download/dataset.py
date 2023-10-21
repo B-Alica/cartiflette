@@ -133,15 +133,26 @@ class Dataset:
             self.md5 = md5
         except Exception as e:
             logger.debug(e)
-            logger.debug("file not referenced in md5 json")
+            logger.info(f"{self} not referenced in md5 json")
 
     @pebble.synchronized
     def update_json_md5(self, md5: str) -> bool:
         "Mise à jour du json des md5"
+        logger.info(f"updating {self} md5 with {md5} value")
         md5 = {
-            self.provider: {
-                self.dataset_family: {
-                    self.source: {self.territory: {str(self.year): md5}}
+            self.provider
+            if self.provider
+            else "null": {
+                self.dataset_family
+                if self.dataset_family
+                else "null": {
+                    self.source
+                    if self.source
+                    else "null": {
+                        self.territory
+                        if self.territory
+                        else "null": {str(self.year): md5}
+                    }
                 }
             }
         }

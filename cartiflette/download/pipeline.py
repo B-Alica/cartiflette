@@ -67,14 +67,14 @@ def download_all(
                             2022: {
                                 'downloaded': True,
                                 'paths': {
-                                    'CHFLIEU_COMMUNE': ['projet-cartiflette/diffusion/shapefiles-test4/year=2022/administrative_level=None/crs=5490/None=None/vectorfile_format=shp/provider=IGN/dataset_family=ADMINEXPRESS/source=EXPRESS-COG-TERRITOIRE/territory=guadeloupe/CHFLIEU_COMMUNE.shp'],
-                                    'REGION': ['projet-cartiflette/diffusion/shapefiles-test4/year=2022/administrative_level=None/crs=5490/None=None/vectorfile_format=shp/provider=IGN/dataset_family=ADMINEXPRESS/source=EXPRESS-COG-TERRITOIRE/territory=guadeloupe/REGION.shp'],
-                                    'COMMUNE': ['projet-cartiflette/diffusion/shapefiles-test4/year=2022/administrative_level=None/crs=5490/None=None/vectorfile_format=shp/provider=IGN/dataset_family=ADMINEXPRESS/source=EXPRESS-COG-TERRITOIRE/territory=guadeloupe/COMMUNE.shp'],
-                                    'DEPARTEMENT': ['projet-cartiflette/diffusion/shapefiles-test4/year=2022/administrative_level=None/crs=5490/None=None/vectorfile_format=shp/provider=IGN/dataset_family=ADMINEXPRESS/source=EXPRESS-COG-TERRITOIRE/territory=guadeloupe/DEPARTEMENT.shp'],
-                                    'EPCI': ['projet-cartiflette/diffusion/shapefiles-test4/year=2022/administrative_level=None/crs=5490/None=None/vectorfile_format=shp/provider=IGN/dataset_family=ADMINEXPRESS/source=EXPRESS-COG-TERRITOIRE/territory=guadeloupe/EPCI.shp'],
-                                    'ARRONDISSEMENT': ['projet-cartiflette/diffusion/shapefiles-test4/year=2022/administrative_level=None/crs=5490/None=None/vectorfile_format=shp/provider=IGN/dataset_family=ADMINEXPRESS/source=EXPRESS-COG-TERRITOIRE/territory=guadeloupe/ARRONDISSEMENT.shp'],
-                                    'CANTON': ['projet-cartiflette/diffusion/shapefiles-test4/year=2022/administrative_level=None/crs=5490/None=None/vectorfile_format=shp/provider=IGN/dataset_family=ADMINEXPRESS/source=EXPRESS-COG-TERRITOIRE/territory=guadeloupe/CANTON.shp'],
-                                    'COLLECTIVITE_TERRITORIALE': ['projet-cartiflette/diffusion/shapefiles-test4/year=2022/administrative_level=None/crs=5490/None=None/vectorfile_format=shp/provider=IGN/dataset_family=ADMINEXPRESS/source=EXPRESS-COG-TERRITOIRE/territory=guadeloupe/COLLECTIVITE_TERRITORIALE.shp']
+                                    'CHFLIEU_COMMUNE': ['projet-cartiflette/diffusion/shapefiles-test4/year=2022/administrative_level=None/crs=5490/None=None/file_format=shp/provider=IGN/dataset_family=ADMINEXPRESS/source=EXPRESS-COG-TERRITOIRE/territory=guadeloupe/CHFLIEU_COMMUNE.shp'],
+                                    'REGION': ['projet-cartiflette/diffusion/shapefiles-test4/year=2022/administrative_level=None/crs=5490/None=None/file_format=shp/provider=IGN/dataset_family=ADMINEXPRESS/source=EXPRESS-COG-TERRITOIRE/territory=guadeloupe/REGION.shp'],
+                                    'COMMUNE': ['projet-cartiflette/diffusion/shapefiles-test4/year=2022/administrative_level=None/crs=5490/None=None/file_format=shp/provider=IGN/dataset_family=ADMINEXPRESS/source=EXPRESS-COG-TERRITOIRE/territory=guadeloupe/COMMUNE.shp'],
+                                    'DEPARTEMENT': ['projet-cartiflette/diffusion/shapefiles-test4/year=2022/administrative_level=None/crs=5490/None=None/file_format=shp/provider=IGN/dataset_family=ADMINEXPRESS/source=EXPRESS-COG-TERRITOIRE/territory=guadeloupe/DEPARTEMENT.shp'],
+                                    'EPCI': ['projet-cartiflette/diffusion/shapefiles-test4/year=2022/administrative_level=None/crs=5490/None=None/file_format=shp/provider=IGN/dataset_family=ADMINEXPRESS/source=EXPRESS-COG-TERRITOIRE/territory=guadeloupe/EPCI.shp'],
+                                    'ARRONDISSEMENT': ['projet-cartiflette/diffusion/shapefiles-test4/year=2022/administrative_level=None/crs=5490/None=None/file_format=shp/provider=IGN/dataset_family=ADMINEXPRESS/source=EXPRESS-COG-TERRITOIRE/territory=guadeloupe/ARRONDISSEMENT.shp'],
+                                    'CANTON': ['projet-cartiflette/diffusion/shapefiles-test4/year=2022/administrative_level=None/crs=5490/None=None/file_format=shp/provider=IGN/dataset_family=ADMINEXPRESS/source=EXPRESS-COG-TERRITOIRE/territory=guadeloupe/CANTON.shp'],
+                                    'COLLECTIVITE_TERRITORIALE': ['projet-cartiflette/diffusion/shapefiles-test4/year=2022/administrative_level=None/crs=5490/None=None/file_format=shp/provider=IGN/dataset_family=ADMINEXPRESS/source=EXPRESS-COG-TERRITOIRE/territory=guadeloupe/COLLECTIVITE_TERRITORIALE.shp']
                                 }
                             }
                         },
@@ -82,18 +82,18 @@ def download_all(
                             2022: {
                                 'downloaded': True,
                                 'paths': {
-                                    'CHFLIEU_COMMUNE': ['projet-cartiflette/diffusion/shapefiles-test4/year=2022/administrative_level=None/crs=2154/None=None/vectorfile_format=shp/provider=IGN/dataset_family=ADMINEXPRESS/source=EXPRESS-COG-TERRITOIRE/territory=metropole/CHFLIEU_COMMUNE.shp'],
-                                    'CHFLIEU_COMMUNE_ASSOCIEE_OU_DELEGUEE': ['projet-cartiflette/diffusion/shapefiles-test4/year=2022/administrative_level=None/crs=2154/None=None/vectorfile_format=shp/provider=IGN/dataset_family=ADMINEXPRESS/source=EXPRESS-COG-TERRITOIRE/territory=metropole/CHFLIEU_COMMUNE_ASSOCIEE_OU_DELEGUEE.shp'],
-                                    'CHFLIEU_ARRONDISSEMENT_MUNICIPAL': ['projet-cartiflette/diffusion/shapefiles-test4/year=2022/administrative_level=None/crs=2154/None=None/vectorfile_format=shp/provider=IGN/dataset_family=ADMINEXPRESS/source=EXPRESS-COG-TERRITOIRE/territory=metropole/CHFLIEU_ARRONDISSEMENT_MUNICIPAL.shp'],
-                                    'ARRONDISSEMENT': ['projet-cartiflette/diffusion/shapefiles-test4/year=2022/administrative_level=None/crs=2154/None=None/vectorfile_format=shp/provider=IGN/dataset_family=ADMINEXPRESS/source=EXPRESS-COG-TERRITOIRE/territory=metropole/ARRONDISSEMENT.shp'],
-                                    'COLLECTIVITE_TERRITORIALE': ['projet-cartiflette/diffusion/shapefiles-test4/year=2022/administrative_level=None/crs=2154/None=None/vectorfile_format=shp/provider=IGN/dataset_family=ADMINEXPRESS/source=EXPRESS-COG-TERRITOIRE/territory=metropole/COLLECTIVITE_TERRITORIALE.shp'],
-                                    'COMMUNE_ASSOCIEE_OU_DELEGUEE': ['projet-cartiflette/diffusion/shapefiles-test4/year=2022/administrative_level=None/crs=2154/None=None/vectorfile_format=shp/provider=IGN/dataset_family=ADMINEXPRESS/source=EXPRESS-COG-TERRITOIRE/territory=metropole/COMMUNE_ASSOCIEE_OU_DELEGUEE.shp'],
-                                    'CANTON': ['projet-cartiflette/diffusion/shapefiles-test4/year=2022/administrative_level=None/crs=2154/None=None/vectorfile_format=shp/provider=IGN/dataset_family=ADMINEXPRESS/source=EXPRESS-COG-TERRITOIRE/territory=metropole/CANTON.shp'],
-                                    'ARRONDISSEMENT_MUNICIPAL': ['projet-cartiflette/diffusion/shapefiles-test4/year=2022/administrative_level=None/crs=2154/None=None/vectorfile_format=shp/provider=IGN/dataset_family=ADMINEXPRESS/source=EXPRESS-COG-TERRITOIRE/territory=metropole/ARRONDISSEMENT_MUNICIPAL.shp'],
-                                    'DEPARTEMENT': ['projet-cartiflette/diffusion/shapefiles-test4/year=2022/administrative_level=None/crs=2154/None=None/vectorfile_format=shp/provider=IGN/dataset_family=ADMINEXPRESS/source=EXPRESS-COG-TERRITOIRE/territory=metropole/DEPARTEMENT.shp'],
-                                    'REGION': ['projet-cartiflette/diffusion/shapefiles-test4/year=2022/administrative_level=None/crs=2154/None=None/vectorfile_format=shp/provider=IGN/dataset_family=ADMINEXPRESS/source=EXPRESS-COG-TERRITOIRE/territory=metropole/REGION.shp'],
-                                    'COMMUNE': ['projet-cartiflette/diffusion/shapefiles-test4/year=2022/administrative_level=None/crs=2154/None=None/vectorfile_format=shp/provider=IGN/dataset_family=ADMINEXPRESS/source=EXPRESS-COG-TERRITOIRE/territory=metropole/COMMUNE.shp'],
-                                    'EPCI': ['projet-cartiflette/diffusion/shapefiles-test4/year=2022/administrative_level=None/crs=2154/None=None/vectorfile_format=shp/provider=IGN/dataset_family=ADMINEXPRESS/source=EXPRESS-COG-TERRITOIRE/territory=metropole/EPCI.shp']
+                                    'CHFLIEU_COMMUNE': ['projet-cartiflette/diffusion/shapefiles-test4/year=2022/administrative_level=None/crs=2154/None=None/file_format=shp/provider=IGN/dataset_family=ADMINEXPRESS/source=EXPRESS-COG-TERRITOIRE/territory=metropole/CHFLIEU_COMMUNE.shp'],
+                                    'CHFLIEU_COMMUNE_ASSOCIEE_OU_DELEGUEE': ['projet-cartiflette/diffusion/shapefiles-test4/year=2022/administrative_level=None/crs=2154/None=None/file_format=shp/provider=IGN/dataset_family=ADMINEXPRESS/source=EXPRESS-COG-TERRITOIRE/territory=metropole/CHFLIEU_COMMUNE_ASSOCIEE_OU_DELEGUEE.shp'],
+                                    'CHFLIEU_ARRONDISSEMENT_MUNICIPAL': ['projet-cartiflette/diffusion/shapefiles-test4/year=2022/administrative_level=None/crs=2154/None=None/file_format=shp/provider=IGN/dataset_family=ADMINEXPRESS/source=EXPRESS-COG-TERRITOIRE/territory=metropole/CHFLIEU_ARRONDISSEMENT_MUNICIPAL.shp'],
+                                    'ARRONDISSEMENT': ['projet-cartiflette/diffusion/shapefiles-test4/year=2022/administrative_level=None/crs=2154/None=None/file_format=shp/provider=IGN/dataset_family=ADMINEXPRESS/source=EXPRESS-COG-TERRITOIRE/territory=metropole/ARRONDISSEMENT.shp'],
+                                    'COLLECTIVITE_TERRITORIALE': ['projet-cartiflette/diffusion/shapefiles-test4/year=2022/administrative_level=None/crs=2154/None=None/file_format=shp/provider=IGN/dataset_family=ADMINEXPRESS/source=EXPRESS-COG-TERRITOIRE/territory=metropole/COLLECTIVITE_TERRITORIALE.shp'],
+                                    'COMMUNE_ASSOCIEE_OU_DELEGUEE': ['projet-cartiflette/diffusion/shapefiles-test4/year=2022/administrative_level=None/crs=2154/None=None/file_format=shp/provider=IGN/dataset_family=ADMINEXPRESS/source=EXPRESS-COG-TERRITOIRE/territory=metropole/COMMUNE_ASSOCIEE_OU_DELEGUEE.shp'],
+                                    'CANTON': ['projet-cartiflette/diffusion/shapefiles-test4/year=2022/administrative_level=None/crs=2154/None=None/file_format=shp/provider=IGN/dataset_family=ADMINEXPRESS/source=EXPRESS-COG-TERRITOIRE/territory=metropole/CANTON.shp'],
+                                    'ARRONDISSEMENT_MUNICIPAL': ['projet-cartiflette/diffusion/shapefiles-test4/year=2022/administrative_level=None/crs=2154/None=None/file_format=shp/provider=IGN/dataset_family=ADMINEXPRESS/source=EXPRESS-COG-TERRITOIRE/territory=metropole/ARRONDISSEMENT_MUNICIPAL.shp'],
+                                    'DEPARTEMENT': ['projet-cartiflette/diffusion/shapefiles-test4/year=2022/administrative_level=None/crs=2154/None=None/file_format=shp/provider=IGN/dataset_family=ADMINEXPRESS/source=EXPRESS-COG-TERRITOIRE/territory=metropole/DEPARTEMENT.shp'],
+                                    'REGION': ['projet-cartiflette/diffusion/shapefiles-test4/year=2022/administrative_level=None/crs=2154/None=None/file_format=shp/provider=IGN/dataset_family=ADMINEXPRESS/source=EXPRESS-COG-TERRITOIRE/territory=metropole/REGION.shp'],
+                                    'COMMUNE': ['projet-cartiflette/diffusion/shapefiles-test4/year=2022/administrative_level=None/crs=2154/None=None/file_format=shp/provider=IGN/dataset_family=ADMINEXPRESS/source=EXPRESS-COG-TERRITOIRE/territory=metropole/COMMUNE.shp'],
+                                    'EPCI': ['projet-cartiflette/diffusion/shapefiles-test4/year=2022/administrative_level=None/crs=2154/None=None/file_format=shp/provider=IGN/dataset_family=ADMINEXPRESS/source=EXPRESS-COG-TERRITOIRE/territory=metropole/EPCI.shp']
                                 }
                             }
                         }
@@ -153,85 +153,6 @@ def download_all(
             results = deep_dict_update(results, func(args))
     return results
 
-
-# def download_all_option2():
-#     # Dérouler le yaml comme dans le test
-
-#     yaml = import_yaml_config()
-
-#     with MasterScraper() as scraper:
-#         for provider, provider_yaml in yaml.items():
-#             if not isinstance(provider_yaml, dict):
-#                 continue
-
-#             for dataset_family, dataset_family_yaml in provider_yaml.items():
-#                 if not isinstance(dataset_family_yaml, dict):
-#                     continue
-
-#                 for source, source_yaml in dataset_family_yaml.items():
-#                     str_yaml = f"{dataset_family}/{source}"
-
-#                     if not isinstance(source_yaml, dict):
-#                         logger.error(
-#                             f"yaml {str_yaml} contains '{source_yaml}'"
-#                         )
-#                         continue
-#                     elif "FTP" in set(source_yaml.keys()):
-#                         logger.info("yaml {str_yaml} not checked (FTP)")
-#                         continue
-
-#                     years = set(source_yaml.keys()) - {"field", "FTP"}
-#                     try:
-#                         territories = set(source_yaml["field"].keys())
-#                     except KeyError:
-#                         territories = {""}
-
-#                     for year in years:
-#                         for territory in territories:
-#                             str_yaml = (
-#                                 f"{dataset_family}/{source}/{year}/"
-#                                 f"{provider}/{territory}"
-#                             )
-
-#                             if territory == "":
-#                                 territory = None
-#                             try:
-#                                 ds = Dataset(
-#                                     dataset_family,
-#                                     source,
-#                                     int(year),
-#                                     provider,
-#                                     territory,
-#                                 )
-#                             except Exception:
-#                                 logger.error(
-#                                     f"error on yaml {str_yaml} : "
-#                                     "dataset not constructed"
-#                                 )
-#                                 continue
-#                             try:
-#                                 url = ds.get_path_from_provider()
-#                             except Exception:
-#                                 logger.error(
-#                                     f"error on yaml {str_yaml} : "
-#                                     "url no reconstructed"
-#                                 )
-#                                 continue
-
-#                             try:
-#                                 r = scraper.get(url, stream=True)
-#                             except Exception:
-#                                 logger.error(
-#                                     f"error on yaml {str_yaml} : "
-#                                     f"https get request failed on {url}"
-#                                 )
-#                                 continue
-#                             if not r.ok:
-#                                 logger.error(
-#                                     f"error on yaml {str_yaml} : "
-#                                     "https get request "
-#                                     f"got code {r.status_code} on {url}"
-#                                 )
 
 if __name__ == "__main__":
     logging.basicConfig(

@@ -13,33 +13,24 @@ from typing import TypedDict
 
 
 from cartiflette import BUCKET, PATH_WITHIN_BUCKET, FS
-from cartiflette.utils import magic_csv_reader
+from cartiflette.utils import magic_csv_reader, create_path_bucket
+from cartiflette.public import get_vectorfile_ign
 
 logger = logging.getLogger(__name__)
 
 # TODO : docstrings
 
 
-class CogDict(TypedDict):
-    "Used only for typing hints"
-    COMMUNE: pd.DataFrame
-    CANTON: pd.DataFrame
-    ARRONDISSEMENT: pd.DataFrame
-    DEPARTEMENT: pd.DataFrame
-    REGION: pd.DataFrame
-    COLLECTIVITE: pd.DataFrame
-    PAYS: pd.DataFrame
-
-
-def get_cog_year(
+def store_cog_year(
     year: int = None,
     bucket: str = BUCKET,
     path_within_bucket: str = PATH_WITHIN_BUCKET,
     fs: s3fs.S3FileSystem = FS,
-) -> CogDict:
+) -> None:
     """
-    Retrieve all COG files on S3, concat all territories and store it into a
-    dict
+    Retrieve all COG files on S3, concat all territories and store it into the
+    storage system. To retrieve data, use cartiflette.public.get_cog_year
+    instead.
 
     Parameters
     ----------
@@ -54,88 +45,7 @@ def get_cog_year(
 
     Returns
     -------
-    CogDict
-        Dictionnary of dataframes. Each key represent a "layer" of the COG's
-        yearly dataset. It might change from year to year, according to what's
-        really present in the dataset.
-
-        If no data is present for the desired vintage, empty dataframes will be
-        returned in the dictionnary.
-
-        Ex. :
-        {
-            'COMMUNE':
-                       TYPECOM    COM   REG  ...                  LIBELLE    CAN COMPARENT
-                 0         COM  01001  84.0  ...  L'Abergement-Clémenciat   0108       NaN
-                 1         COM  01002  84.0  ...    L'Abergement-de-Varey   0101       NaN
-                 2         COM  01004  84.0  ...        Ambérieu-en-Bugey   0101       NaN
-                 3         COM  01005  84.0  ...      Ambérieux-en-Dombes   0122       NaN
-                 4         COM  01006  84.0  ...                  Ambléon   0104       NaN
-                 ...
-                 [37601 rows x 12 columns],
-
-            'CANTON':
-                      id_canton id_departement  ...            libelle  actual
-                 0         0101             01  ...  Ambérieu-en-Bugey       C
-                 1         0102             01  ...           Attignat       C
-                 2         0103             01  ...         Valserhône       C
-                 3         0104             01  ...             Belley       C
-                 4         0105             01  ...  Bourg-en-Bresse-1       C
-                 ...
-                 [2290 rows x 10 columns],
-
-            'ARRONDISSEMENT':
-                       ARR  DEP  ...                   NCCENR                  LIBELLE
-                 0     011   01  ...                   Belley                   Belley
-                 1     012   01  ...          Bourg-en-Bresse          Bourg-en-Bresse
-                 2     013   01  ...                      Gex                      Gex
-                 3     014   01  ...                   Nantua                   Nantua
-                 4     021   02  ...          Château-Thierry          Château-Thierry
-                 ...
-                 [332 rows x 8 columns],
-
-            'DEPARTEMENT':
-                      DEP  REG  ...                   NCCENR                  LIBELLE
-                 0     01   84  ...                      Ain                      Ain
-                 1     02   32  ...                    Aisne                    Aisne
-                 2     03   84  ...                   Allier                   Allier
-                 3     04   93  ...  Alpes-de-Haute-Provence  Alpes-de-Haute-Provence
-                 4     05   93  ...             Hautes-Alpes             Hautes-Alpes
-                 ...
-                 [101 rows x 7 columns],
-
-            'REGION':
-                     REG CHEFLIEU  ...                      NCCENR                  LIBELLE
-                 0     1    97105  ...                  Guadeloupe               Guadeloupe
-                 1     2    97209  ...                  Martinique               Martinique
-                 2     3    97302  ...                      Guyane                   Guyane
-                 3     4    97411  ...                  La Réunion               La Réunion
-                 4     6    97608  ...                     Mayotte                  Mayotte
-                 5    11    75056  ...               Île-de-France            Île-de-France
-                 ...
-                 [18 rows x 6 columns],
-
-            'COLLECTIVITE':
-                     CTCD  ...                                            LIBELLE
-                 0    01D  ...                     Conseil départemental de L'Ain
-                 1    02D  ...                   Conseil départemental de L'Aisne
-                 2    03D  ...                  Conseil départemental de L'Allier
-                 3    04D  ...  Conseil départemental des Alpes-de-Haute-Provence
-                 4    05D  ...             Conseil départemental des Hautes-Alpes
-                 ...
-                 [100 rows x 6 columns],
-
-            'PAYS':
-                        COG  ACTUAL  CAPAY  CRPAY  ...  ANCNOM CODEISO2 CODEISO3 CODENUM3
-                 0    99101       1    NaN    NaN  ...     NaN       DK      DNK    208.0
-                 1    99101       3  99102    NaN  ...     NaN       FO      FRO    234.0
-                 2    99102       1    NaN    NaN  ...     NaN       IS      ISL    352.0
-                 3    99103       1    NaN    NaN  ...     NaN       NO      NOR    578.0
-                 4    99103       3    NaN    NaN  ...     NaN       BV      BVT     74.0
-                 ...
-                 [282 rows x 11 columns]
-         }
-
+    None
     """
 
     if not year:
@@ -170,32 +80,48 @@ def get_cog_year(
         else:
             dict_cog[level] = pd.DataFrame()
 
-    return dict_cog
+        for ext, method, kwargs in [
+            ("parquet", "to_parquet", {}),
+            ("csv", "to_csv", {"encoding": "utf8"}),
+        ]:
+            config_dict = {
+                "bucket": bucket,
+                "path_within_bucket": path_within_bucket,
+                "year": year,
+                "borders": level,
+                "crs": None,
+                "filter_by": None,
+                "value": None,
+                "file_format": ext,
+                "provider": "cartiflette",
+                "dataset_family": "COG",
+                "source": level,
+                "territory": "france_entiere",
+                "filename": f"{level}.{ext}",
+            }
+            path = create_path_bucket(config=config_dict)
+            with fs.open(path, "wb") as f:
+                getattr(dict_cog[level], method)(f, **kwargs)
 
 
-def get_vectorfile_ign(
-    dataset_family: str = "ADMINEXPRESS",
-    source: str = "EXPRESS-COG-TERRITOIRE",
+def store_cog_ign(
     year: str = None,
     territory: str = "metropole",
     borders: str = "COMMUNE",
-    provider: str = "IGN",
     bucket: str = BUCKET,
     path_within_bucket: str = PATH_WITHIN_BUCKET,
     fs: s3fs.S3FileSystem = FS,
-) -> gpd.GeoDataFrame:
+) -> None:
     """
-    Retrieve IGN shapefiles from MinIO
-    Note that each parameter from 'dataset_family' to 'provider' can be
-    replaced by a joker using '*' instead.
+    Retrieve IGN shapefiles from MinIO and store it after preprocessing; if
+    multiple files are gathered, those will be concatenated. In any case, the
+    projection will be uniformized to 4326.
+
+    Note that 'territory' and 'borders' can use a "*" wildcard to concatenate
+    all available datasets.
 
     Parameters
     ----------
-    dataset_family : str, optional
-        Family as described in the yaml file. The default is "ADMINEXPRESS".
-    source : str, optional
-        Source as described in the yaml file. The default is
-        "EXPRESS-COG-TERRITOIRE".
     year : int, optional
         Desired vintage. Will use the current year if set to None (which is
         default).
@@ -204,8 +130,6 @@ def get_vectorfile_ign(
     borders : str, optional
         Desired "mesh" (ie available layers in the raw dataset : commune,
         arrondissement, etc.). The default is "COMMUNE".
-    provider : str, optional
-        Provider described in the yaml file. The default is "IGN".
     bucket : str, optional
         Bucket to use. The default is BUCKET.
     path_within_bucket : str, optional
@@ -217,48 +141,22 @@ def get_vectorfile_ign(
     Raises
     ------
     ValueError
-        If the dataset is not found on MinIO
+        - If a wildcard is used on an unallowed argument
+        - If the dataset is not found on MinIO
 
     Returns
     -------
-    gdf : gpd.GeoDataFrame
-        Raw dataset as extracted from IGN. The projection/encoding of the file
-        might have been standardised (ie projected to 4326 if the original
-        projection was not EPSG referenced and encoded to UTF8)
-        Ex. :
-                                 ID           NOM         NOM_M INSEE_COM  \
-        0  COMMUNE_0000000009754033    Connangles    CONNANGLES     43076
-        1  COMMUNE_0000000009760784       Vidouze       VIDOUZE     65462
-        2  COMMUNE_0000000009742077     Fouesnant     FOUESNANT     29058
-        3  COMMUNE_0000000009735245  Plougrescant  PLOUGRESCANT     22218
-        4  COMMUNE_0000000009752504     Montcarra     MONTCARRA     38250
-
-                   STATUT  POPULATION INSEE_CAN INSEE_ARR INSEE_DEP INSEE_REG  \
-        0  Commune simple         137        11         1        43        84
-        1  Commune simple         243        13         3        65        76
-        2  Commune simple        9864        11         4        29        53
-        3  Commune simple        1166        27         3        22        53
-        4  Commune simple         569        24         2        38        84
-
-          SIREN_EPCI                                           geometry  \
-        0  200073419  POLYGON ((748166.100 6463826.600, 748132.400 6...
-        1  200072106  POLYGON ((455022.600 6263681.900, 455008.000 6...
-        2  242900660  MULTIPOLYGON (((177277.800 6756845.800, 177275...
-        3  200065928  MULTIPOLYGON (((245287.300 6878865.100, 245288...
-        4  200068542  POLYGON ((889525.800 6504614.500, 889525.600 6...
-
-                               source
-        0  IGN:EXPRESS-COG-TERRITOIRE
-        1  IGN:EXPRESS-COG-TERRITOIRE
-        2  IGN:EXPRESS-COG-TERRITOIRE
-        3  IGN:EXPRESS-COG-TERRITOIRE
-        4  IGN:EXPRESS-COG-TERRITOIRE
-
+    None
     """
 
     if not year:
         year = date.today().year
+    elif year == "*":
+        raise ValueError(f"Cannot use a * wildcard on {year=}")
 
+    dataset_family = "ADMINEXPRESS"
+    source = "EXPRESS-COG-TERRITOIRE"
+    provider = "IGN"
     pattern = (
         f"{bucket}/{path_within_bucket}/{year=}/**/"
         f"{provider=}/{dataset_family=}/{source=}/{territory=}/**/"
@@ -277,7 +175,7 @@ def get_vectorfile_ign(
         logger.info(f"retrieving {file=}")
         with tempfile.TemporaryDirectory() as tempdir:
             pattern = file.rsplit(".", maxsplit=1)[0]
-            all_files = fs.glob(pattern + "*")  # , refresh=True)
+            all_files = fs.glob(pattern + ".*")  # , refresh=True)
             # see issue : https://github.com/fsspec/s3fs/issues/504
             for temp in all_files:
                 with open(
@@ -286,9 +184,8 @@ def get_vectorfile_ign(
                     with fs.open(temp, "rb") as fsf:
                         tf.write(fsf.read())
             gdf = gpd.read_file(os.path.join(tempdir, os.path.basename(file)))
-        if len(files) > 1:
-            # reproject all geodataframes before concatenation
-            gdf = gdf.to_crs(4326)
+
+        gdf = gdf.to_crs(4326)
         data.append(gdf)
     gdf = gpd.pd.concat(data)
 
@@ -297,30 +194,40 @@ def get_vectorfile_ign(
 
     gdf["source"] = f"{provider}:{source}"
 
-    return gdf
+    config_dict = {
+        "bucket": bucket,
+        "path_within_bucket": path_within_bucket,
+        "year": year,
+        "borders": borders,
+        "crs": gdf.crs.to_epsg(),
+        "filter_by": None,
+        "value": None,
+        "file_format": "GPKG",
+        "provider": "cartiflette",
+        "dataset_family": dataset_family,
+        "source": source,
+        "territory": territory if territory != "*" else "france_entiere",
+        "filename": f"{borders}.gpkg",
+    }
+    path = create_path_bucket(config=config_dict)
+    with fs.open(path, "wb") as f:
+        gdf.to_file(f, driver="GPKG", encoding="utf8")
 
 
-def get_vectorfile_communes_arrondissement(
+def store_vectorfile_communes_arrondissement(
     year: int = None,
-    provider: str = "IGN",
-    source: str = "EXPRESS-COG-TERRITOIRE",
     bucket: str = BUCKET,
     path_within_bucket: str = PATH_WITHIN_BUCKET,
     fs: s3fs.S3FileSystem = FS,
-) -> gpd.GeoDataFrame:
+) -> None:
     """
-    Retrieved "enriched" dataframe for cities, using also cities' districts.
+    Store "enriched" dataframe for cities, using also cities' districts.
 
     Parameters
     ----------
     year : int, optional
         Desired vintage. Will use the current year if set to None (which is
         default).
-    provider : str, optional
-        Provider described in the yaml file. The default is "IGN".
-    source : str, optional
-        Source as described in the yaml file. The default is
-        "EXPRESS-COG-TERRITOIRE".
     bucket : str, optional
         Bucket to use. The default is BUCKET.
     path_within_bucket : str, optional
@@ -329,40 +236,16 @@ def get_vectorfile_communes_arrondissement(
         S3 file system to use. The default is FS.
     Returns
     -------
-    df_enrichi : gpd.GeoDataFrame
-        Ex:
-                                 ID           NOM         NOM_M INSEE_COM  \
-        0  COMMUNE_0000000009754033    Connangles    CONNANGLES     43076
-        1  COMMUNE_0000000009760784       Vidouze       VIDOUZE     65462
-        2  COMMUNE_0000000009742077     Fouesnant     FOUESNANT     29058
-        3  COMMUNE_0000000009735245  Plougrescant  PLOUGRESCANT     22218
-        4  COMMUNE_0000000009752504     Montcarra     MONTCARRA     38250
+    None
 
-                   STATUT  POPULATION INSEE_CAN INSEE_ARR INSEE_DEP INSEE_REG  \
-        0  Commune simple         137        11         1        43        84
-        1  Commune simple         243        13         3        65        76
-        2  Commune simple        9864        11         4        29        53
-        3  Commune simple        1166        27         3        22        53
-        4  Commune simple         569        24         2        38        84
-
-          SIREN_EPCI                                           geometry  \
-        0  200073419  POLYGON ((748166.100 6463826.600, 748132.400 6...
-        1  200072106  POLYGON ((455022.600 6263681.900, 455008.000 6...
-        2  242900660  MULTIPOLYGON (((177277.800 6756845.800, 177275...
-        3  200065928  MULTIPOLYGON (((245287.300 6878865.100, 245288...
-        4  200068542  POLYGON ((889525.800 6504614.500, 889525.600 6...
-
-                               source INSEE_COG
-        0  IGN:EXPRESS-COG-TERRITOIRE     43076
-        1  IGN:EXPRESS-COG-TERRITOIRE     65462
-        2  IGN:EXPRESS-COG-TERRITOIRE     29058
-        3  IGN:EXPRESS-COG-TERRITOIRE     22218
-        4  IGN:EXPRESS-COG-TERRITOIRE     38250
 
     """
 
     if not year:
         year = date.today().year
+
+    provider = "IGN"
+    source = "EXPRESS-COG-TERRITOIRE"
 
     arrondissements = get_vectorfile_ign(
         borders="ARRONDISSEMENT_MUNICIPAL",
@@ -370,14 +253,18 @@ def get_vectorfile_communes_arrondissement(
         territory="metropole",
         provider=provider,
         source=source,
+        type_download="bucket",
+        crs="4326",
     )
 
     communes = get_vectorfile_ign(
         borders="COMMUNE",
         year=year,
-        territory="metropole",
+        territory="france_entiere",
         provider=provider,
         source=source,
+        type_download="bucket",
+        crs="4326",
     )
     communes_sans_grandes_villes = communes.loc[
         ~communes["NOM"].isin(["Marseille", "Lyon", "Paris"])
@@ -393,25 +280,42 @@ def get_vectorfile_communes_arrondissement(
         :, ~arrondissement_extra_info.columns.str.endswith("_y")
     ]
 
-    df_enrichi = pd.concat(
+    gdf_enrichi = pd.concat(
         [communes_sans_grandes_villes, arrondissement_extra_info]
     )
 
-    df_enrichi["INSEE_COG"] = np.where(
-        df_enrichi["INSEE_ARM"].isnull(),
-        df_enrichi["INSEE_COM"],
-        df_enrichi["INSEE_ARM"],
+    gdf_enrichi["INSEE_COG"] = np.where(
+        gdf_enrichi["INSEE_ARM"].isnull(),
+        gdf_enrichi["INSEE_COM"],
+        gdf_enrichi["INSEE_ARM"],
     )
 
-    df_enrichi = df_enrichi.drop("INSEE_ARM", axis="columns")
+    gdf_enrichi = gdf_enrichi.drop("INSEE_ARM", axis="columns")
 
-    return df_enrichi
+    # TODO: store on s3fs
+    config_dict = {
+        "bucket": bucket,
+        "path_within_bucket": path_within_bucket,
+        "year": year,
+        "borders": "COMMUNE",
+        "crs": gdf_enrichi.crs.to_epsg(),
+        "filter_by": None,
+        "value": None,
+        "file_format": "GPKG",
+        "provider": "cartiflette",
+        "dataset_family": "COG",
+        "source": source,
+        "territory": "france_entiere",
+        "filename": "COMMUNE_ARRONDISSEMENTS_MUNICIPAUX.gpkg",
+    }
+    path = create_path_bucket(config=config_dict)
+    with fs.open(path, "wb") as f:
+        gdf_enrichi.to_file(f, driver="GPKG", encoding="utf8")
 
 
-def get_BV(
+def store_living_area(
     year: int = None,
     bv_source: str = "FondsDeCarte_BV_2022",
-    ign_source: str = "EXPRESS-COG-TERRITOIRE",
     bucket: str = BUCKET,
     path_within_bucket: str = PATH_WITHIN_BUCKET,
     fs: s3fs.S3FileSystem = FS,
@@ -428,9 +332,6 @@ def get_BV(
     bv_source : str, optional
         Dataset's source to use for living area. The default is 
         "FondsDeCarte_BV_2022".
-    ign_source : str, optional
-        Dataset's source to use for geometries (should be a dataset from the
-        dataset_family AdminExpress. The default is "EXPRESS-COG-TERRITOIRE".
     bucket : str, optional
         Bucket to use. The default is BUCKET.
     path_within_bucket : str, optional
@@ -498,7 +399,8 @@ def get_BV(
 
     bv = pd.concat(data)
 
-    communes = get_vectorfile_ign(
+    ign_source = "EXPRESS-COG-TERRITOIRE"
+    communes = store_cog_ign(
         borders="COMMUNE",
         year=year,
         territory="*",
@@ -514,19 +416,92 @@ def get_BV(
     elif bv_source == "FondsDeCarte_BV_2012":
         rename = ["bv2012", "libbv2012"]
     bv = bv.rename(dict(zip(rename, ["bv", "libbv"])), axis=1)
+
+    config_dict = {
+        "bucket": bucket,
+        "path_within_bucket": path_within_bucket,
+        "year": year,
+        "borders": "COMMUNE",
+        "crs": bv.crs.to_epsg(),
+        "filter_by": None,
+        "value": None,
+        "file_format": "GPKG",
+        "provider": "cartiflette",
+        "dataset_family": "bassins-vie",
+        "source": "BV",
+        "filename": "bassins_vie.gpkg",
+    }
+    path = create_path_bucket(config=config_dict)
+    with fs.open(path, "wb") as f:
+        bv.to_file(f, driver="GPKG")
+
     by = ["bv", "libbv", "dep", "reg"]
 
     bv = bv.dissolve(
         by=by, aggfunc={"POPULATION": "sum"}, as_index=False, dropna=False
     )
 
+    config_dict = {
+        "bucket": bucket,
+        "path_within_bucket": path_within_bucket,
+        "year": year,
+        "borders": "BASSIN-VIE",
+        "crs": bv.crs.to_epsg(),
+        "filter_by": None,
+        "value": None,
+        "file_format": "GPKG",
+        "provider": "cartiflette",
+        "dataset_family": f"bassins-vie-{bv_source.split('_')[-1]}",
+        "source": "BV",
+        "territory": "france_entiere",
+        "filename": "bassins_vie.gpkg",
+    }
+    path = create_path_bucket(config=config_dict)
+    with fs.open(path, "wb") as f:
+        bv.to_file(f, driver="GPKG")
+
     return bv
 
 
-if __name__ == "__main__":
-    # logging.basicConfig(level=logging.INFO)
+def simili_pipeline(
+    bucket: str = BUCKET,
+    path_within_bucket: str = PATH_WITHIN_BUCKET,
+    fs: s3fs.S3FileSystem = FS,
+):
+    kwargs = {
+        "bucket": bucket,
+        "path_within_bucket": path_within_bucket,
+        "fs": fs,
+    }
 
-    # ret = get_cog_year(2022)
-    # ret = get_vectorfile_ign(source="EXPRESS-COG-TERRITOIRE", year=2022)
-    # ret = get_vectorfile_communes_arrondissement(year=2022)
-    ret = get_BV(year=2022)
+    logger.error("ATTENTION, YEARS EST FORCE A 2022 POUR PREPROCESSING")
+    # years = list(range(2015, date.today().year + 1))[-1::-1]
+    years = [2022]
+
+    logger.info("Preprocess raw sources")
+    for year in years:
+        # Préprocessing du COG INSEE
+        logger.info(f"COG INSEE {year}")
+        store_cog_year(year=year, **kwargs)
+
+        # Concaténation d'AdminExpress Communal
+        store_cog_ign(
+            year=year,
+            territory="*",
+            borders="COMMUNE",
+            **kwargs,
+        )
+
+        # Préparation des AdminExpress enrichis avec arrondissements municipaux
+        store_vectorfile_communes_arrondissement(year=year, **kwargs)
+
+        if year >= 2022:
+            store_living_area(year, "FondsDeCarte_BV_2022", **kwargs)
+
+        if 2012 <= year <= 2022:
+            store_living_area(year, "FondsDeCarte_BV_2012", **kwargs)
+
+
+if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
+    simili_pipeline()

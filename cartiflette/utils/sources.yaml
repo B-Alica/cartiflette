@@ -13,6 +13,13 @@ IGN:
         guyane: UTM22RGFG95_GUF
         reunion: RGR92UTM40S_REU
         mayotte: RGM04UTM38S_MYT
+      2023:
+        prefix: ADMIN-EXPRESS-COG
+        date1: "2023-05-04"
+        date2: "2023-05-03"
+        version: "3-2"
+        url_prefix: https://wxs.ign.fr/x02uy2aiwjo9bm8ce5plwqmr/telechargement/prepackage/ADMINEXPRESS-COG_SHP_TERRITOIRES_PACK
+        structure: "{url_prefix}_{date1}${prefix}_{version}__SHP_{territory}_{date2}/file/{prefix}_{version}__SHP_{territory}_{date2}.7z"
       2022:
         prefix: ADMIN-EXPRESS-COG
         date: "2022-04-15"
@@ -47,6 +54,8 @@ IGN:
         guyane: UTM22RGFG95_D973
         reunion: RGR92UTM40S_D974
         mayotte: RGM04UTM38S_D976
+      2023:
+        file: https://wxs.ign.fr/x02uy2aiwjo9bm8ce5plwqmr/telechargement/prepackage/ADMINEXPRESS_SHP_TERRITOIRES_PACK_2023-10-16$ADMIN-EXPRESS_3-2__SHP_LAMB93_FXX_2023-10-16/file/ADMIN-EXPRESS_3-2__SHP_LAMB93_FXX_2023-10-16.7z
       2022:
         file: https://wxs.ign.fr/x02uy2aiwjo9bm8ce5plwqmr/telechargement/prepackage/ADMINEXPRESS_SHP_WGS84G_PACK_2022-06-21$ADMIN-EXPRESS_3-1__SHP__FRA_WM_2022-06-21/file/ADMIN-EXPRESS_3-1__SHP__FRA_WM_2022-06-21.7z
       2021:
@@ -68,6 +77,13 @@ IGN:
         guyane: UTM22RGFG95_GUF
         reunion: RGR92UTM40S_REU
         mayotte: RGM04UTM38S_MYT
+      2023:
+        prefix: ADMIN-EXPRESS-COG-CARTO
+        date: "2023-05-04"
+        version: "3-2"
+        url_prefix: https://wxs.ign.fr/x02uy2aiwjo9bm8ce5plwqmr/telechargement/prepackage/ADMINEXPRESS-COG-CARTO_SHP_TERRITOIRES_PACK
+        structure: "{url_prefix}_{date}${prefix}_{version}__SHP_{territory}_{date}/file/{prefix}_{version}__SHP_{territory}_{date}.7z"
+      
       2022:
         prefix: ADMIN-EXPRESS-COG-CARTO
         date: "2022-04-15"
@@ -82,6 +98,8 @@ IGN:
         structure: "{url_prefix}_{date}${prefix}_{version}__SHP_{territory}_{date}/file/{prefix}_{version}__SHP_{territory}_{date}.7z"
 
     EXPRESS-COG-CARTO:
+      2023:
+        file: https://wxs.ign.fr/x02uy2aiwjo9bm8ce5plwqmr/telechargement/prepackage/ADMINEXPRESS-COG-CARTO_SHP_WGS84G_PACK_2023-05-04$ADMIN-EXPRESS-COG-CARTO_3-2__SHP_WGS84G_FRA_2023-05-03/file/ADMIN-EXPRESS-COG-CARTO_3-2__SHP_WGS84G_FRA_2023-05-03.7z
       2022:
         file: https://wxs.ign.fr/x02uy2aiwjo9bm8ce5plwqmr/telechargement/prepackage/ADMINEXPRESS-COG-CARTO_SHP_WGS84G_PACK_2022-04-15$ADMIN-EXPRESS-COG-CARTO_3-1__SHP_WGS84G_FRA_2022-04-15/file/ADMIN-EXPRESS-COG-CARTO_3-1__SHP_WGS84G_FRA_2022-04-15.7z
       2021:

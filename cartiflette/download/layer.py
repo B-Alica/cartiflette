@@ -186,5 +186,5 @@ class Layer:
                                 f"{self} - encoding={encoding}, "
                                 "layer will be re-encoded to UTF8"
                             )
-                            with open(file, "w", encoding="utf8"):
-                                data.decode(encoding)
+                            with open(file, "w", encoding="utf8") as f:
+                                f.write(data.decode(encoding))

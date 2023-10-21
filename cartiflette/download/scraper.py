@@ -144,7 +144,9 @@ class HttpScraper(
         head = r.headers
 
         if not r.ok:
-            raise IOError(f"download failed with {r.status_code} code")
+            raise IOError(
+                f"download failed with {r.status_code} code for url {url}"
+            )
 
         try:
             expected_md5 = head["content-md5"]
@@ -175,7 +177,9 @@ class HttpScraper(
             logger.debug(f"starting download at {url}")
             r = self.get(url, stream=True, **kwargs)
             if not r.ok:
-                raise IOError(f"download failed with {r.status_code} code")
+                raise IOError(
+                    f"download failed with {r.status_code} code for url {url}"
+                )
 
             if expected_file_size:
                 total = int(np.ceil(expected_file_size / block_size))
@@ -198,12 +202,12 @@ class HttpScraper(
         if expected_md5:
             if not self.__validate_file__(file_path, expected_md5):
                 os.unlink(file_path)
-                raise IOError("download failed (corrupted file)")
+                raise IOError("download failed (corrupted file) for url {url}")
         elif expected_file_size:
             # check that the downloaded file is the expected size
             if not expected_file_size == os.path.getsize(file_path):
                 os.unlink(file_path)
-                raise IOError("download failed (corrupted file)")
+                raise IOError("download failed (corrupted file) for url {url}")
 
         # if there's a hash value, check if there are any changes
         if hash and self.__validate_file__(file_path, hash):

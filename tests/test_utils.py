@@ -13,16 +13,16 @@ from cartiflette.utils import create_path_bucket
             (
                 "my_bucket/PATH_WITHIN_BUCKET/2022/"
                 "administrative_level=COMMUNE/2154/region=28/"
-                "vectorfile_format=geojson/provider=IGN/"
+                "file_format=geojson/provider=IGN/"
                 "source=EXPRESS-COG-TERRITOIRE/raw.geojson"
             ),
         ),
         (
-            {"vectorfile_format": "shp"},
+            {"file_format": "shp"},
             (
                 "BUCKET/PATH_WITHIN_BUCKET/2022/"
                 "administrative_level=COMMUNE/2154/region=28/"
-                "vectorfile_format=shp/provider=IGN/"
+                "file_format=shp/provider=IGN/"
                 "source=EXPRESS-COG-TERRITOIRE/"
             ),
         ),
@@ -41,7 +41,7 @@ from cartiflette.utils import create_path_bucket
             ),
         ),
         (
-            {"path_within_bucket": "data", "vectorfile_format": "gpkg"},
+            {"path_within_bucket": "data", "file_format": "gpkg"},
             (
                 "BUCKET/data/2022/"
                 "administrative_level=COMMUNE/2154/region=28/"

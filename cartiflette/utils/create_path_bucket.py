@@ -12,14 +12,17 @@ from cartiflette import BUCKET, PATH_WITHIN_BUCKET
 class ConfigDict(TypedDict):
     bucket: Optional[str]
     path_within_bucket: Optional[str]
+    year: str
+    borders: str
+    crs: Optional[int]
+    filter_by: str
+    value: str
+    file_format: str
     provider: str
     source: str
-    vectorfile_format: str
-    borders: str
-    filter_by: str
-    year: str
-    crs: Optional[int]
-    value: str
+    dataset_family: str
+    territory: str
+    filename: str
 
 
 def create_path_bucket(config: ConfigDict) -> str:
@@ -46,7 +49,7 @@ def create_path_bucket(config: ConfigDict) -> str:
     provider = config.get("provider")
     source = config.get("source")
 
-    vectorfile_format = config.get("vectorfile_format")
+    file_format = config.get("file_format")
     borders = config.get("borders")
     dataset_family = config.get("dataset_family")
     territory = config.get("territory")
@@ -67,17 +70,17 @@ def create_path_bucket(config: ConfigDict) -> str:
         f"/administrative_level={borders}"
         f"/{crs=}"
         f"/{filter_by}={value}"
-        f"/{vectorfile_format=}"
+        f"/{file_format=}"
         f"/{territory=}"
         f"/{simplification=}"
     ).replace("'", "")
 
     if filename:
         write_path += f"/{filename}"
-    elif vectorfile_format == "shp":
+    elif file_format == "shp":
         write_path += "/"
     else:
-        write_path += f"/raw.{vectorfile_format}"
+        write_path += f"/raw.{file_format}"
 
     return write_path
 
@@ -89,7 +92,7 @@ def create_path_bucket(config: ConfigDict) -> str:
 #             "path_within_bucket": PATH_WITHIN_BUCKET,
 #             "provider": "IGN",
 #             "source": "ADMINEXPRESS",
-#             "vectorfile_format": "shp",
+#             "file_format": "shp",
 #             "borders": "COMMUNE",
 #             "filter_by": None,
 #             "year": 2022,

@@ -60,13 +60,13 @@ def _upload_raw_dataset_to_s3(
 
         Ex: {
             'CHEF_LIEU': [
-                'projet-cartiflette/diffusion/shapefiles-test4/year=2017/administrative_level=None/crs=4326/None=None/vectorfile_format=shp/provider=IGN/dataset_family=BDTOPO/source=ROOT/territory=martinique/CHEF_LIEU.shp'
+                'projet-cartiflette/diffusion/shapefiles-test4/year=2017/administrative_level=None/crs=4326/None=None/file_format=shp/provider=IGN/dataset_family=BDTOPO/source=ROOT/territory=martinique/CHEF_LIEU.shp'
             ],
             'COMMUNE': [
-                'projet-cartiflette/diffusion/shapefiles-test4/year=2017/administrative_level=None/crs=4326/None=None/vectorfile_format=shp/provider=IGN/dataset_family=BDTOPO/source=ROOT/territory=martinique/COMMUNE.shp'
+                'projet-cartiflette/diffusion/shapefiles-test4/year=2017/administrative_level=None/crs=4326/None=None/file_format=shp/provider=IGN/dataset_family=BDTOPO/source=ROOT/territory=martinique/COMMUNE.shp'
             ],
             'ARRONDISSEMENT': [
-                'projet-cartiflette/diffusion/shapefiles-test4/year=2017/administrative_level=None/crs=4326/None=None/vectorfile_format=shp/provider=IGN/dataset_family=BDTOPO/source=ROOT/territory=metropole/ARRONDISSEMENT.shp'
+                'projet-cartiflette/diffusion/shapefiles-test4/year=2017/administrative_level=None/crs=4326/None=None/file_format=shp/provider=IGN/dataset_family=BDTOPO/source=ROOT/territory=metropole/ARRONDISSEMENT.shp'
             ]
         }
 
@@ -202,13 +202,13 @@ def _download_sources(
                                     'downloaded': True,
                                     'paths': {
                                         'CHEF_LIEU': [
-                                            'projet-cartiflette/diffusion/shapefiles-test4/year=2017/administrative_level=None/crs=4326/None=None/vectorfile_format=shp/provider=IGN/dataset_family=BDTOPO/source=ROOT/territory=martinique/CHEF_LIEU.shp'
+                                            'projet-cartiflette/diffusion/shapefiles-test4/year=2017/administrative_level=None/crs=4326/None=None/file_format=shp/provider=IGN/dataset_family=BDTOPO/source=ROOT/territory=martinique/CHEF_LIEU.shp'
                                         ],
                                         'COMMUNE': [
-                                            'projet-cartiflette/diffusion/shapefiles-test4/year=2017/administrative_level=None/crs=4326/None=None/vectorfile_format=shp/provider=IGN/dataset_family=BDTOPO/source=ROOT/territory=martinique/COMMUNE.shp'
+                                            'projet-cartiflette/diffusion/shapefiles-test4/year=2017/administrative_level=None/crs=4326/None=None/file_format=shp/provider=IGN/dataset_family=BDTOPO/source=ROOT/territory=martinique/COMMUNE.shp'
                                         ],
                                         'ARRONDISSEMENT': [
-                                            'projet-cartiflette/diffusion/shapefiles-test4/year=2017/administrative_level=None/crs=4326/None=None/vectorfile_format=shp/provider=IGN/dataset_family=BDTOPO/source=ROOT/territory=metropole/ARRONDISSEMENT.shp'
+                                            'projet-cartiflette/diffusion/shapefiles-test4/year=2017/administrative_level=None/crs=4326/None=None/file_format=shp/provider=IGN/dataset_family=BDTOPO/source=ROOT/territory=metropole/ARRONDISSEMENT.shp'
                                         ]
                                     }
                                 }

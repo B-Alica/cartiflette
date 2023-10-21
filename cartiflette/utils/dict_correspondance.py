@@ -3,6 +3,16 @@ Collection of utils to reformat inputs
 """
 
 
+def standardize_inputs(file_format):
+    corresp_filter_by_columns = dict_corresp_filter_by()
+    format_standardized = create_format_standardized()
+    gpd_driver = create_format_driver()
+    format_write = format_standardized[file_format.lower()]
+    driver = gpd_driver[format_write]
+
+    return corresp_filter_by_columns, format_write, driver
+
+
 def dict_corresp_filter_by() -> dict:
     """Transforms explicit administrative borders into relevant column
 
@@ -38,6 +48,7 @@ def create_format_standardized() -> dict:
         "geoparquet": "parquet",
         "parquet": "parquet",
         "topojson": "topojson",
+        "csv": "csv",
     }
     return format_standardized
 
@@ -55,6 +66,7 @@ def create_format_driver() -> dict:
         "shp": None,
         "parquet": None,
         "topojson": None,
+        "csv": None,
     }
     return gpd_driver
 

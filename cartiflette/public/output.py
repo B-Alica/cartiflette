@@ -142,8 +142,6 @@ def download_file_single(
     )
 
     with tempfile.TemporaryDirectory() as tdir:
-        print("=" * 50)
-        print(tdir)
         if type_download == "bucket":
             try:
                 if not fs.exists(url):
@@ -162,9 +160,6 @@ def download_file_single(
 
                 else:
                     local_path = f"{tdir}/{os.path.basename(url)}"
-                    print("-" * 50)
-                    print(url)
-                    print(local_path)
                     fs.download(url, local_path)
 
         else:

@@ -341,7 +341,7 @@ def get_vectorfile_communes_arrondissement(
     return gdf
 
 
-def get_bv_commune(
+def get_living_area_commune(
     year=None,
     year_bv="2022",
     bucket=cartiflette.BUCKET,
@@ -374,7 +374,7 @@ def get_bv_commune(
     return gdf
 
 
-def get_bv(
+def get_living_area(
     year,
     year_bv,
     bucket=cartiflette.BUCKET,
@@ -391,8 +391,8 @@ def get_bv(
         "year": year,
         "borders": "BASSIN-VIE",
         "crs": 4326,
-        "filter_by": None,
-        "value": None,
+        "filter_by": "origin",
+        "value": "preprocessed",
         "file_format": "GPKG",
         "provider": "cartiflette",
         "dataset_family": f"bassins-vie-{year_bv}",

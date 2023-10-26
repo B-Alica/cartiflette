@@ -31,8 +31,7 @@ def get_cog_year(
     path_within_bucket=cartiflette.PATH_WITHIN_BUCKET,
     type_download: str = "https",
     fs=cartiflette.FS,
-    *args,
-    **kwargs,
+    **kwargs_requests,
 ) -> CogDict:
     """
     Retrieve unified COG data from the file system storage and returns a dict
@@ -146,7 +145,6 @@ def get_cog_year(
 
     if not year:
         year = date.today().year
-
     levels = [
         "COMMUNE",
         "CANTON",
@@ -159,7 +157,7 @@ def get_cog_year(
 
     dict_cog = {}
     for level in levels:
-        kwargs = {
+        kwargs_cartiflette = {
             "bucket": bucket,
             "path_within_bucket": path_within_bucket,
             "year": year,
@@ -177,8 +175,7 @@ def get_cog_year(
             "fs": fs,
             "type_download": type_download,
         }
-        dict_cog[level] = download_file_single(**kwargs)
-
+        dict_cog[level] = download_file_single(**kwargs_cartiflette, **kwargs_requests)
     return dict_cog
 
 
@@ -195,8 +192,7 @@ def get_vectorfile_ign(
     path_within_bucket=cartiflette.PATH_WITHIN_BUCKET,
     type_download: str = "https",
     fs=cartiflette.FS,
-    *args,
-    **kwargs,
+    **kwargs_requests,
 ) -> gpd.GeoDataFrame:
     # TODO : docstring
     """
@@ -231,8 +227,7 @@ def get_vectorfile_ign(
         2  IGN:EXPRESS-COG-TERRITOIRE
         3  IGN:EXPRESS-COG-TERRITOIRE
         4  IGN:EXPRESS-COG-TERRITOIRE
-
-"""
+    """
     kwargs = {
         "bucket": bucket,
         "path_within_bucket": path_within_bucket,
@@ -250,7 +245,7 @@ def get_vectorfile_ign(
         "fs": fs,
         "type_download": type_download,
     }
-    gdf = download_file_single(**kwargs)
+    gdf = download_file_single(**kwargs, **kwargs_requests)
     return gdf
 
 
@@ -260,8 +255,7 @@ def get_vectorfile_communes_arrondissement(
     path_within_bucket=cartiflette.PATH_WITHIN_BUCKET,
     type_download: str = "https",
     fs=cartiflette.FS,
-    *args,
-    **kwargs,
+    **kwargs_requests,
 ) -> gpd.GeoDataFrame:
     """
     #TODO
@@ -337,7 +331,7 @@ def get_vectorfile_communes_arrondissement(
         "fs": fs,
         "type_download": type_download,
     }
-    gdf = download_file_single(**kwargs)
+    gdf = download_file_single(**kwargs, **kwargs_requests)
     return gdf
 
 
@@ -348,12 +342,10 @@ def get_living_area_commune(
     path_within_bucket=cartiflette.PATH_WITHIN_BUCKET,
     type_download: str = "https",
     fs=cartiflette.FS,
-    *args,
-    **kwargs,
+    **kwargs_requests,
 ):
     if not year:
         year = str(date.today().year)
-
     kwargs = {
         "bucket": bucket,
         "path_within_bucket": path_within_bucket,
@@ -370,7 +362,7 @@ def get_living_area_commune(
         "filename": "bassins_vie.gpkg",
         "fs": fs,
     }
-    gdf = download_file_single(**kwargs)
+    gdf = download_file_single(**kwargs, **kwargs_requests)
     return gdf
 
 
@@ -381,8 +373,7 @@ def get_living_area(
     path_within_bucket=cartiflette.PATH_WITHIN_BUCKET,
     type_download: str = "https",
     fs=cartiflette.FS,
-    *args,
-    **kwargs,
+    **kwargs_requests,
 ):
     # TODO
     kwargs = {
@@ -401,7 +392,7 @@ def get_living_area(
         "filename": "bassins_vie.gpkg",
         "fs": fs,
     }
-    gdf = download_file_single(**kwargs)
+    gdf = download_file_single(**kwargs, **kwargs_requests)
     return gdf
 
 

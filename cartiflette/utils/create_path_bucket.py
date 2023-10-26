@@ -23,6 +23,7 @@ class ConfigDict(TypedDict):
     dataset_family: str
     territory: str
     filename: str
+    simplification: int
 
 
 def create_path_bucket(config: ConfigDict) -> str:

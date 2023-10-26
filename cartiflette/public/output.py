@@ -16,6 +16,7 @@ from cartiflette.utils import create_path_bucket
 
 logger = logging.getLogger(__name__)
 
+
 def download_file_single(
     year: typing.Union[str, int],
     borders: str,
@@ -25,9 +26,9 @@ def download_file_single(
     file_format: str,
     provider: str,
     source: str,
-    simplication: typing.Union[str, int, float] = 0,
     dataset_family: str,
     territory: str,
+    simplication: typing.Union[str, int, float] = 0,
     filename: str = "*",
     type_download: str = "https",
     fs: s3fs.S3FileSystem = cartiflette.FS,
@@ -130,7 +131,7 @@ def download_file_single(
             "dataset_family": dataset_family,
             "source": source,
             "year": year,
-            "administrative_level": borders,
+            "borders": borders,
             "crs": crs,
             "filter_by": filter_by,
             "value": value,

@@ -85,12 +85,15 @@ class HttpScraper(
         )
         # requests_cache.install_cache(cache_name, expire_after=expire_after)
 
-        for protocol in ["http", "https"]:
-            try:
-                proxy = {protocol: os.environ[f"{protocol}_proxy"]}
-                self.proxies.update(proxy)
-            except KeyError:
-                continue
+        if not "proxies" in kwargs:
+            for protocol in ["http", "https"]:
+                try:
+                    proxy = {protocol: os.environ[f"{protocol}_proxy"]}
+                    self.proxies.update(proxy)
+                except KeyError:
+                    continue
+        else:
+            self.proxies.update(kwargs["proxies"])
 
     def download_to_tempfile_http(
         self, url: str, hash: str = None, **kwargs

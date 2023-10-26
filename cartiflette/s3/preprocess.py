@@ -11,16 +11,17 @@ import pandas as pd
 from pebble import ThreadPool
 import s3fs
 import tempfile
-from typing import TypedDict
 
 
 from cartiflette import BUCKET, PATH_WITHIN_BUCKET, FS, THREADS_DOWNLOAD
 from cartiflette.utils import magic_csv_reader, create_path_bucket
-from cartiflette.public import get_vectorfile_ign, download_file_single
+from cartiflette.public import download_file_single
 
 logger = logging.getLogger(__name__)
 
 # TODO : docstrings
+
+logger.error("preprocessing des bassins de vie pose pb, manque Paris")
 
 
 def store_cog_year(
@@ -103,6 +104,7 @@ def store_cog_year(
                     "provider": "cartiflette",
                     "dataset_family": "COG",
                     "source": source,
+                    "simplification": 0,
                     "territory": "france_entiere",
                     "filename": f"{source}.{ext}",
                 }
@@ -221,6 +223,7 @@ def store_cog_ign(
             "source": source,
             "territory": territory if territory != "*" else "france_entiere",
             "filename": f"{borders}.gpkg",
+            "simplification": 0,
         }
         path = create_path_bucket(config=config_dict)
         with fs.open(path, "wb") as f:
@@ -341,6 +344,7 @@ def store_vectorfile_communes_arrondissement(
             "source": "COMMUNE_ARRONDISSEMENTS_MUNICIPAUX",
             "territory": "france_entiere",
             "filename": "COMMUNE_ARRONDISSEMENTS_MUNICIPAUX.gpkg",
+            "simplification": 0,
         }
         path = create_path_bucket(config=config_dict)
         with fs.open(path, "wb") as f:
@@ -481,6 +485,7 @@ def store_living_area(
             "dataset_family": f"bassins-vie-{bv_source.split('_')[-1]}",
             "source": "BV",
             "filename": "bassins_vie.gpkg",
+            "simplification": 0,
         }
         path = create_path_bucket(config=config_dict)
         with fs.open(path, "wb") as f:
@@ -506,6 +511,7 @@ def store_living_area(
             "source": "BV",
             "territory": "france_entiere",
             "filename": "bassins_vie.gpkg",
+            "simplification": 0,
         }
         path = create_path_bucket(config=config_dict)
         with fs.open(path, "wb") as f:
@@ -611,4 +617,5 @@ def preprocess_pipeline(
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
-    preprocess_pipeline()
+    # preprocess_pipeline()
+    store_living_area(year=2022)

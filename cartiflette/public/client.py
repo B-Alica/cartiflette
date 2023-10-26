@@ -175,7 +175,9 @@ def get_cog_year(
             "fs": fs,
             "type_download": type_download,
         }
-        dict_cog[level] = download_file_single(**kwargs_cartiflette, **kwargs_requests)
+        dict_cog[level] = download_file_single(
+            **kwargs_cartiflette, **kwargs_requests
+        )
     return dict_cog
 
 
@@ -188,6 +190,7 @@ def get_vectorfile_ign(
     crs: str = "*",
     filter_by: str = "origin",
     value: str = "raw",
+    simplification: int = 0,
     bucket=cartiflette.BUCKET,
     path_within_bucket=cartiflette.PATH_WITHIN_BUCKET,
     type_download: str = "https",
@@ -244,6 +247,7 @@ def get_vectorfile_ign(
         "file_format": "GPKG",
         "fs": fs,
         "type_download": type_download,
+        "simplification": 0,
     }
     gdf = download_file_single(**kwargs, **kwargs_requests)
     return gdf
@@ -330,6 +334,7 @@ def get_vectorfile_communes_arrondissement(
         "filename": "COMMUNE_ARRONDISSEMENTS_MUNICIPAUX.gpkg",
         "fs": fs,
         "type_download": type_download,
+        "simplification": 0,
     }
     gdf = download_file_single(**kwargs, **kwargs_requests)
     return gdf
@@ -361,6 +366,7 @@ def get_living_area_commune(
         "territory": "france_entiere",
         "filename": "bassins_vie.gpkg",
         "fs": fs,
+        "simplification": 0,
     }
     gdf = download_file_single(**kwargs, **kwargs_requests)
     return gdf
@@ -391,6 +397,7 @@ def get_living_area(
         "territory": "france_entiere",
         "filename": "bassins_vie.gpkg",
         "fs": fs,
+        "simplification": 0,
     }
     gdf = download_file_single(**kwargs, **kwargs_requests)
     return gdf

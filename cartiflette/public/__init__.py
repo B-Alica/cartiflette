@@ -9,8 +9,8 @@ from cartiflette.public.client import (
     get_cog_year,
     get_vectorfile_ign,
     get_vectorfile_communes_arrondissement,
-    get_bv_commune,
-    get_bv,
+    get_living_area_commune,
+    get_living_area,
 )
 
 __all__ = [
@@ -19,6 +19,6 @@ __all__ = [
     "get_cog_year",
     "get_vectorfile_ign",
     "get_vectorfile_communes_arrondissement",
-    "get_bv_commune",
-    "get_bv",
+    "get_living_area_commune",
+    "get_living_area",
 ]

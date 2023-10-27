@@ -1,3 +1,50 @@
+MinistereInterieur:
+  BANATIC:
+    PERIMETRE-GROUPEMENTS:
+      structure: "{url_prefix}?zone={territory}&date={date}&format=D"
+      territory:
+        Auvergne-Rhone-Alpes: R84
+        Bourgogne-Franche-Comte: R27
+        Bretagne: R53
+        Centre-Val-de-Loire: R24
+        Corse: R94
+        Grand-Est: R44
+        Guadeloupe: R01
+        Guyane: R03
+        Hauts-de-France: R32
+        Ile-de-France: R11
+        La-Reunion: R04
+        Martinique: R02
+        Normandie: R28
+        Nouvelle-Aquitaine: R75
+        Occitanie: R76
+        Pays-de-la-Loire: R52
+        Provence-Alpes-Cote-d-Azur: R93
+      2023:
+        url_prefix: "https://www.banatic.interieur.gouv.fr/V5/fichiers-en-telechargement/telecharger.php"
+        date: 01/01/2023
+      2022:
+        url_prefix: "https://www.banatic.interieur.gouv.fr/V5/fichiers-en-telechargement/telecharger.php"
+        date: 01/01/2022
+      2021:
+        url_prefix: "https://www.banatic.interieur.gouv.fr/V5/fichiers-en-telechargement/telecharger.php"
+        date: 01/01/2021
+      2020:
+        url_prefix: "https://www.banatic.interieur.gouv.fr/V5/fichiers-en-telechargement/telecharger.php"
+        date: 01/01/2020
+      2019:
+        url_prefix: "https://www.banatic.interieur.gouv.fr/V5/fichiers-en-telechargement/telecharger.php"
+        date: 01/01/2019
+      2018:
+        url_prefix: "https://www.banatic.interieur.gouv.fr/V5/fichiers-en-telechargement/telecharger.php"
+        date: 01/01/2018
+      2017:
+        url_prefix: "https://www.banatic.interieur.gouv.fr/V5/fichiers-en-telechargement/telecharger.php"
+        date: 01/01/2017
+      2016:
+        url_prefix: "https://www.banatic.interieur.gouv.fr/V5/fichiers-en-telechargement/telecharger.php"
+        date: 01/01/2016
+
 IGN:
   
   ADMINEXPRESS:

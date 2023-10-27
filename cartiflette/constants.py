@@ -36,6 +36,30 @@ REFERENCES = [
 REFERENCES = gpd.GeoDataFrame(REFERENCES, crs=4326)
 
 DOWNLOAD_PIPELINE_ARGS = {
+    "BANATIC": [
+        "MinistereInterieur",
+        "BANATIC",
+        "PERIMETRE-GROUPEMENTS",
+        [
+            "Auvergne-Rhone-Alpes",
+            "Bourgogne-Franche-Comte",
+            "Bretagne",
+            "Centre-Val-de-Loire",
+            "Corse",
+            "Grand-Est",
+            "Guadeloupe",
+            "Guyane",
+            "Hauts-de-France",
+            "Ile-de-France",
+            "La-Reunion",
+            "Martinique",
+            "Normandie",
+            "Nouvelle-Aquitaine",
+            "Occitanie",
+            "Pays-de-la-Loire",
+            "Provence-Alpes-Cote-d-Azur",
+        ],
+    ],
     "ADMIN-EXPRESS": [
         "IGN",
         "ADMINEXPRESS",

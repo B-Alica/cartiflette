@@ -134,3 +134,13 @@ dmypy.json
 
 *.sqlite
 *.sqlite*
+
+**/emissions.csv
+*.gpkg
+*.topojson
+*.geojson
+*.shp
+*.cpg
+*.dbf
+*.prj
+*.shx

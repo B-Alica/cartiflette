@@ -491,7 +491,7 @@ def store_living_area(
         with fs.open(path, "wb") as f:
             bv.to_file(f, driver="GPKG")
 
-        by = ["bv", "libbv", "dep", "reg"]
+        by = ["bv", "libbv"]
 
         bv = bv.dissolve(
             by=by, aggfunc={"POPULATION": "sum"}, as_index=False, dropna=False

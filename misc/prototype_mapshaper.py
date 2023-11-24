@@ -1,209 +1,108 @@
-import s3fs
-import os
-import subprocess
-
-from cartiflette.download.download import _download_sources
-from cartiflette.utils import create_path_bucket
-
-ENDPOINT_URL = "https://minio.lab.sspcloud.fr"
-
-fs = s3fs.S3FileSystem(client_kwargs={"endpoint_url": ENDPOINT_URL})
-
-
-
-provider = "IGN"
-source = "EXPRESS-COG-CARTO-TERRITOIRE",
-dict_corresp = {"REGION": "INSEE_REG", "DEPARTEMENT": "INSEE_DEP"}
-year = 2022
-provider = "IGN"
-dataset_family = "ADMINEXPRESS"
-source = "EXPRESS-COG-CARTO-TERRITOIRE"
-territory = "metropole"
-path_within_bucket = "test-download5"
-crs = 4326
-bucket = "projet-cartiflette"
-
-borders="COMMUNE" #tempdf['borders'].iloc[0]
-format_output="topojson" #tempdf['format'].iloc[0]
-niveau_agreg="DEPARTEMENT"#tempdf['filter_by'].iloc[0]
-simplification = 0
+from cartiflette.s3 import upload_s3_raw
+from cartiflette.pipeline import crossproduct_parameters_production
+from cartiflette.pipeline import mapshaperize_split_from_s3, mapshaperize_merge_split_from_s3
 
 # DOWNLOAD =========================
-  
-x = _download_sources(
-    upload = True,
-    providers = provider,
-    dataset_families = dataset_family,
-    sources = source,
-    territories = territory,
-    years = year,
-    path_within_bucket = path_within_bucket
+
+path_within_bucket = "test-download9"
+
+path_bucket = upload_s3_raw(path_within_bucket=path_within_bucket)
+
+mapshaperize_split_from_s3(
+    path_bucket,
+    {
+        'path_within_bucket': path_within_bucket,
+        "borders": "COMMUNE",
+        "filter_by": "REGION",
+        "simplification": 50
+    }
 )
 
-
-# path_manual = create_path_bucket(
-#  {
-#      "bucket": bucket,
-#      "path_within_bucket": path_within_bucket,
-#      "year": year,
-#      "borders": None,
-#      "crs": 2154,
-#      "filter_by": "origin",
-#      "value": "raw",
-#      "vectorfile_format": "shp",
-#      "provider": provider,
-#      "dataset_family": dataset_family,
-#      "source": source,
-#      "territory": territory,
-#      "filename": "COMMUNE.shp",
-#  }
-# )
-
-path = x['IGN']['ADMINEXPRESS']['EXPRESS-COG-CARTO-TERRITOIRE']['metropole'][2022]['paths']['COMMUNE'][0]
-path_bucket = path.rsplit("/", maxsplit=1)[0]
-
-
-def list_raw_files_level(fs, path_bucket, borders):
-    list_raw_files = fs.ls(f"{path_bucket}")
-    list_raw_files = [
-        chemin for chemin in list_raw_files if chemin.rsplit("/", maxsplit=1)[-1].startswith(f'{borders}.')
-        ]
-    return list_raw_files
-
-
-def download_files_from_list(fs, list_raw_files):
-    for files in list_raw_files:
-        fs.download(
-            files,
-            "temp/" +\
-                files.rsplit("/", maxsplit=1)[-1]
-        )
-
-os.mkdir("temp")
-
-list_raw_files = list_raw_files_level(fs, path_bucket, borders=borders)
-download_files_from_list(fs, list_raw_files)
-
-os.makedirs(f"{niveau_agreg}/{format_output}/", exist_ok=True)
-
-simplification_percent = simplification if simplification is not None else 0
-
-subprocess.run(
-    (
-        f"mapshaper temp/{borders}.shp name='' -proj EPSG:{crs} "
-        f"-simplify {simplification_percent}% "
-        f"-each \"SOURCE='{provider}:{source[0]}'\" "
-        f"-split {dict_corresp[niveau_agreg]} "
-        f"-o {niveau_agreg}/{format_output}/ format={format_output} extension=\".{format_output}\" singles"
-    ),
-    shell=True
+mapshaperize_merge_split_from_s3(
+    path_bucket,
+    {
+        'path_within_bucket': path_within_bucket,
+        "simplification": 50
+    }
 )
-
-bucket = bucket
-path_within_bucket = path_within_bucket
-
-for values in os.listdir(f"{niveau_agreg}/{format_output}"):
-    path_s3 = create_path_bucket(
-            {
-                "bucket": bucket,
-                "path_within_bucket": path_within_bucket,
-                "year": year,
-                "borders": borders,
-                "crs": crs,
-                "filter_by": niveau_agreg,
-                "value": values.replace(f".{format_output}", ""),
-                "vectorfile_format": format_output,
-                "provider": provider,
-                "dataset_family": dataset_family,
-                "source": source,
-                "territory": territory,
-                "simplification": simplification
-            })
-    fs.put(f"{niveau_agreg}/{format_output}/{values}", path_s3, recursive=True)
-
-
-# OLD
 
 croisement_decoupage_level = {
     ## structure -> niveau geo: [niveau decoupage macro],
-    "REGION": ["FRANCE_ENTIERE"],
-    "ARRONDISSEMENT_MUNICIPAL" : ['DEPARTEMENT'], 
-    "COMMUNE_ARRONDISSEMENT": ["DEPARTEMENT", "REGION", "FRANCE_ENTIERE"],
-    "COMMUNE": ["DEPARTEMENT", "REGION", "FRANCE_ENTIERE"],
-    "DEPARTEMENT": ["REGION", "FRANCE_ENTIERE"]
+    # "REGION": ["FRANCE_ENTIERE"],
+    #"ARRONDISSEMENT_MUNICIPAL" : ['DEPARTEMENT'], 
+    #"COMMUNE_ARRONDISSEMENT": ["DEPARTEMENT", "REGION"],# "FRANCE_ENTIERE"],
+    "COMMUNE": ["DEPARTEMENT", "REGION"],# "FRANCE_ENTIERE"],
+    "DEPARTEMENT": ["REGION"]#, "FRANCE_ENTIERE"]
 }
 
 
 
 #formats = ["geoparquet", "shp", "gpkg", "geojson"]
-formats = ["topojson"]
-#formats = ["geojson"]
+formats = ["topojson", "geojson"]
 
 #years = [y for y in range(2021, 2023)]
 years = [2022]
 
 #crs_list = [4326, 2154, "official"]
-crs_list = [4326]
+crs_list = [4326, 2154]
 
 sources = ["EXPRESS-COG-CARTO-TERRITOIRE"]
 
 
-#tempdf = s3.crossproduct_parameters_production(
-#        croisement_filter_by_borders=croisement_decoupage_level,
-#        list_format=formats,
-#        years=years,
-#        crs_list=crs_list,
-#        sources=sources,
-#    )
-
-dict_corresp = {"REGION": "INSEE_REG", "DEPARTEMENT": "INSEE_DEP"}
-
-
-bucket = "projet-cartiflette"
-path_within_bucket = "diffusion/shapefiles-test2"
-year=2022
-provider="IGN"
-source='EXPRESS-COG-TERRITOIRE'
-field="metropole"
-
-borders="COMMUNE" #tempdf['borders'].iloc[0]
-format_output="topojson" #tempdf['format'].iloc[0]
-niveau_agreg="DEPARTEMENT"#tempdf['filter_by'].iloc[0]
+tempdf = crossproduct_parameters_production(
+        croisement_filter_by_borders=croisement_decoupage_level,
+        list_format=formats,
+        years=years,
+        crs_list=crs_list,
+        sources=sources,
+        simplifications=[0, 50]
+    )
 
 
-path_bucket = f"{bucket}/{path_within_bucket}/{year=}/raw/{provider=}/{source=}/{field=}"
+for index, row in tempdf.iterrows():
+    print(row)
+    mapshaperize_split_from_s3(
+        path_bucket,
+        {
+            **{'path_within_bucket': path_within_bucket},
+            **row.to_dict()
+        }
+    )
 
 
-def list_raw_files_level(fs, path_bucket, borders):
-    list_raw_files = fs.ls(f"{path_bucket}")
-    list_raw_files = [
-        chemin for chemin in list_raw_files if chemin.rsplit("/", maxsplit=1)[-1].startswith(f'{borders}.')
-        ]
-    return list_raw_files
+# niveau commune_arrondissement
 
+from cartiflette.config import FS
+from cartiflette.pipeline.prepare_mapshaper import prepare_local_directory_mapshaper
+from cartiflette.mapshaper import mapshaperize_split_merge
 
-def download_files_from_list(fs, list_raw_files):
-    for files in list_raw_files:
-        fs.download(
-            files,
-            "temp/" +\
-                files.rsplit("/", maxsplit=1)[-1]
-        )
+local_dir = "temp/"
 
-os.mkdir("temp")
-list_raw_files = list_raw_files_level(fs, path_bucket, borders=borders)
-download_files_from_list(fs, list_raw_files)
-
-os.mkdir(niveau_agreg)
-
-
-subprocess.run(
-    f"mapshaper temp/{borders}.shp name='' -proj wgs84 \
-        -each \"SOURCE='{provider}:{source}'\"\
-        -split {dict_corresp[niveau_agreg]} \
-        -o '{niveau_agreg}/' format={format_output} extension=\".{format_output}\" singles",
-    shell=True
+format_intermediate = "geojson"
+local_directories = prepare_local_directory_mapshaper(
+        path_bucket,
+        borders="COMMUNE",
+        niveau_agreg="DEPARTEMENT",
+        format_output="topojson",
+        simplification=0,
+        local_dir=local_dir,
+        fs=FS
 )
+local_directories = prepare_local_directory_mapshaper(
+        path_bucket,
+        borders="ARRONDISSEMENT_MUNICIPAL",
+        niveau_agreg="DEPARTEMENT",
+        format_output="topojson",
+        simplification=0,
+        local_dir=local_dir,
+        fs=FS
+)
+
+
+
+
+
+# A intégrer
 
 # topojson & niveau communal
 format_output="topojson"
@@ -270,3 +169,78 @@ subprocess.run(
     shell=True
 )
 
+
+
+# old
+
+from cartiflette.config import ENDPOINT_URL
+fs = s3fs.S3FileSystem(client_kwargs={"endpoint_url": ENDPOINT_URL})
+
+
+
+provider = "IGN"
+source = "EXPRESS-COG-CARTO-TERRITOIRE",
+year = 2022
+provider = "IGN"
+dataset_family = "ADMINEXPRESS"
+source = "EXPRESS-COG-CARTO-TERRITOIRE"
+territory = "metropole"
+path_within_bucket = "test-download6"
+crs = 4326
+bucket = "projet-cartiflette"
+
+dict_corresp = {"REGION": "INSEE_REG", "DEPARTEMENT": "INSEE_DEP"}
+
+borders="COMMUNE" #tempdf['borders'].iloc[0]
+format_output="topojson" #tempdf['format'].iloc[0]
+niveau_agreg="DEPARTEMENT"#tempdf['filter_by'].iloc[0]
+simplification = 0
+
+
+
+
+bucket = "projet-cartiflette"
+#path_within_bucket = "shapefiles-test2"
+year=2022
+provider="IGN"
+source='EXPRESS-COG-TERRITOIRE'
+field="metropole"
+
+borders="COMMUNE" #tempdf['borders'].iloc[0]
+format_output="topojson" #tempdf['format'].iloc[0]
+niveau_agreg="DEPARTEMENT"#tempdf['filter_by'].iloc[0]
+
+
+path_bucket = f"{bucket}/{path_within_bucket}/{year=}/raw/{provider=}/{source=}/{field=}"
+
+
+def list_raw_files_level(fs, path_bucket, borders):
+    list_raw_files = fs.ls(f"{path_bucket}")
+    list_raw_files = [
+        chemin for chemin in list_raw_files if chemin.rsplit("/", maxsplit=1)[-1].startswith(f'{borders}.')
+        ]
+    return list_raw_files
+
+
+def download_files_from_list(fs, list_raw_files):
+    for files in list_raw_files:
+        fs.download(
+            files,
+            "temp/" +\
+                files.rsplit("/", maxsplit=1)[-1]
+        )
+
+os.mkdir("temp")
+list_raw_files = list_raw_files_level(fs, path_bucket, borders=borders)
+download_files_from_list(fs, list_raw_files)
+
+os.mkdir(niveau_agreg)
+
+
+subprocess.run(
+    f"mapshaper temp/{borders}.shp name='' -proj wgs84 \
+        -each \"SOURCE='{provider}:{source}'\"\
+        -split {dict_corresp[niveau_agreg]} \
+        -o '{niveau_agreg}/' format={format_output} extension=\".{format_output}\" singles",
+    shell=True
+)

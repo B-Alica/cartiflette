@@ -66,7 +66,7 @@ def magic_csv_reader(
         with open(path_or_bytes, "r", encoding=encoding) as f:
             sample = f.read(4096)
     else:
-        sample = data.decode(encoding)[:4096]
+        sample = data.decode(encoding)[: 4096 * 5]
 
     dialect = sniffer.sniff(sample)
 

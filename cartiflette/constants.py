@@ -36,6 +36,12 @@ REFERENCES = [
 REFERENCES = gpd.GeoDataFrame(REFERENCES, crs=4326)
 
 DOWNLOAD_PIPELINE_ARGS = {
+    "BANATIC-SIREN-INSEE": [
+        "MinistereInterieur",
+        "BANATIC",
+        "CORRESPONDANCE-SIREN-INSEE",
+        [],
+    ],
     "BANATIC": [
         "MinistereInterieur",
         "BANATIC",
